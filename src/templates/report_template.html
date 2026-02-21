@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI Data Insights Report — {{ filename }}</title>
+<style>
+    @page {
+        size: A4;
+        margin: 2cm 1.5cm;
+        @bottom-center { content: "Page " counter(page) " of " counter(pages); font-size: 9px; color: #888; }
+    }
+    body {
+        font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        color: #222;
+        line-height: 1.6;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* ---------- Cover Page ---------- */
+    .cover {
+        text-align: center;
+        padding: 120px 40px 60px;
+        page-break-after: always;
+    }
+    .cover h1 { font-size: 32px; color: #1a73e8; margin-bottom: 10px; }
+    .cover .subtitle { font-size: 18px; color: #555; }
+    .cover .meta { margin-top: 40px; font-size: 14px; color: #888; }
+
+    /* ---------- Sections ---------- */
+    h2 {
+        color: #1a73e8;
+        border-bottom: 2px solid #1a73e8;
+        padding-bottom: 6px;
+        margin-top: 30px;
+    }
+    h3 { color: #333; margin-top: 20px; }
+
+    /* ---------- Scorecard ---------- */
+    .scorecard {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin: 15px 0;
+    }
+    .scorecard .card {
+        background: #f0f4ff;
+        border-radius: 8px;
+        padding: 15px 25px;
+        text-align: center;
+        min-width: 140px;
+        flex: 1;
+    }
+    .card .value { font-size: 28px; font-weight: 700; color: #1a73e8; }
+    .card .label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ---------- Color badges ---------- */
+    .badge-green  { background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .badge-yellow { background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .badge-red    { background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+
+    /* ---------- Tables ---------- */
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+    th { background: #1a73e8; color: #fff; padding: 8px 12px; text-align: left; }
+    td { padding: 6px 12px; border-bottom: 1px solid #e0e0e0; }
+    tr:nth-child(even) { background: #f9f9f9; }
+
+    /* ---------- Charts ---------- */
+    .chart-container { margin: 15px 0; text-align: center; }
+    .chart-container img { max-width: 100%; border: 1px solid #ddd; border-radius: 6px; }
+    .chart-placeholder {
+        background: #f0f4ff; border: 1px dashed #1a73e8; border-radius: 6px;
+        padding: 30px; text-align: center; color: #1a73e8; font-style: italic;
+    }
+
+    /* ---------- Recommendations ---------- */
+    .rec-list { list-style: none; padding: 0; }
+    .rec-list li { padding: 8px 12px; margin: 5px 0; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 0 6px 6px 0; }
+
+    /* ---------- Misc ---------- */
+    .narrative { background: #fafafa; padding: 15px; border-radius: 6px; margin: 10px 0; }
+    .section-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<!-- ========== COVER PAGE ========== -->
+<div class="cover">
+    <h1>📊 AI Data Insights Report</h1>
+    <div class="subtitle">{{ filename }}</div>
+    <div class="meta">
+        Generated: {{ generated_at }}<br>
+        Powered by AI Data Insights Analyst
+    </div>
+</div>
+
+<!-- ========== EXECUTIVE SUMMARY ========== -->
+<h2>Executive Summary</h2>
+<div class="narrative">{{ executive_summary }}</div>
+
+<!-- ========== DATA QUALITY SCORECARD ========== -->
+<h2>Data Quality Scorecard</h2>
+<div class="scorecard">
+    <div class="card">
+        <div class="value">
+            {% if data_quality_score >= 80 %}<span class="badge-green">{{ data_quality_score }}</span>
+            {% elif data_quality_score >= 50 %}<span class="badge-yellow">{{ data_quality_score }}</span>
+            {% else %}<span class="badge-red">{{ data_quality_score }}</span>{% endif %}
+        </div>
+        <div class="label">Overall Score (0-100)</div>
+    </div>
+    {% if cleaning_result %}
+    <div class="card">
+        <div class="value">{{ cleaning_result.removed_rows }}</div>
+        <div class="label">Rows Removed</div>
+    </div>
+    <div class="card">
+        <div class="value">{{ cleaning_result.missing_handled }}</div>
+        <div class="label">Missing Values Handled</div>
+    </div>
+    <div class="card">
+        <div class="value">{{ "%.1f"|format(cleaning_result.data_quality_score * 100) }}%</div>
+        <div class="label">Retention Quality</div>
+    </div>
+    {% endif %}
+    {% if anomaly_results and anomaly_results.anomaly_rate is defined %}
+    <div class="card">
+        <div class="value">{{ "%.1f"|format(anomaly_results.anomaly_rate * 100) }}%</div>
+        <div class="label">Anomaly Rate</div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- ========== TREND ANALYSIS ========== -->
+{% if trend_results and not trend_results.get('skipped') %}
+<h2 class="section-break">Trend Analysis</h2>
+{% if trend_results.overall_narrative %}
+<div class="narrative">{{ trend_results.overall_narrative }}</div>
+{% endif %}
+
+{% if trend_results.columns %}
+<table>
+    <tr><th>Column</th><th>Direction</th><th>Significant?</th><th>p-value</th></tr>
+    {% for col in trend_results.columns %}
+    <tr>
+        <td>{{ col.column }}</td>
+        <td>{{ col.trend_direction }}</td>
+        <td>{{ "Yes" if col.is_significant else "No" }}</td>
+        <td>{{ "%.4f"|format(col.p_value) }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endif %}
+
+<!-- ========== ANOMALY REPORT ========== -->
+{% if anomaly_results and not anomaly_results.get('skipped') %}
+<h2 class="section-break">Anomaly Report</h2>
+<div class="narrative">{{ anomaly_results.get('narrative', '') }}</div>
+
+{% if anomaly_results.column_details %}
+<table>
+    <tr><th>Column</th><th>IQR Outliers</th><th>Z-score Outliers</th><th>Total</th></tr>
+    {% for col_name, detail in anomaly_results.column_details.items() %}
+    {% if col_name != '_isolation_forest' %}
+    <tr>
+        <td>{{ col_name }}</td>
+        <td>{{ detail.get('iqr_outliers', 0) }}</td>
+        <td>{{ detail.get('zscore_outliers', 0) }}</td>
+        <td>{{ detail.get('total', 0) }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+{% endif %}
+{% endif %}
+
+<!-- ========== CORRELATION ANALYSIS ========== -->
+{% if correlation_results and not correlation_results.get('skipped') %}
+<h2 class="section-break">Correlation Analysis</h2>
+<div class="narrative">{{ correlation_results.get('narrative', '') }}</div>
+
+{% if correlation_results.top_positive %}
+<h3>Top Positive Correlations</h3>
+<table>
+    <tr><th>Column A</th><th>Column B</th><th>Correlation</th></tr>
+    {% for pair in correlation_results.top_positive %}
+    <tr><td>{{ pair.col_a }}</td><td>{{ pair.col_b }}</td><td>{{ "%.4f"|format(pair.correlation) }}</td></tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% if correlation_results.top_negative %}
+<h3>Top Negative Correlations</h3>
+<table>
+    <tr><th>Column A</th><th>Column B</th><th>Correlation</th></tr>
+    {% for pair in correlation_results.top_negative %}
+    <tr><td>{{ pair.col_a }}</td><td>{{ pair.col_b }}</td><td>{{ "%.4f"|format(pair.correlation) }}</td></tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endif %}
+
+<!-- ========== VISUALIZATIONS ========== -->
+{% if chart_images %}
+<h2 class="section-break">Visualizations</h2>
+{% for chart in chart_images %}
+<div class="chart-container">
+    <h3>{{ chart.title }}</h3>
+    {% if chart.png_path %}
+    <img src="file://{{ chart.png_path }}" alt="{{ chart.title }}">
+    {% else %}
+    <div class="chart-placeholder">Chart available in interactive HTML report: {{ chart.title }}</div>
+    {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- ========== BUSINESS RECOMMENDATIONS ========== -->
+{% if recommendations %}
+<h2 class="section-break">Business Recommendations</h2>
+<ol class="rec-list">
+    {% for rec in recommendations %}
+    <li>{{ rec }}</li>
+    {% endfor %}
+</ol>
+{% endif %}
+
+<!-- ========== APPENDIX ========== -->
+{% if insights_result and insights_result.statistical_summary %}
+<h2 class="section-break">Appendix — Raw Statistics</h2>
+<table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    {% for key, val in insights_result.statistical_summary.items() %}
+    <tr><td>{{ key | replace('_', ' ') | title }}</td><td>{{ val }}</td></tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<!-- ========== AGENT PERFORMANCE ========== -->
+{% if agent_timings %}
+<h3>Agent Latency</h3>
+<table>
+    <tr><th>Agent</th><th>Duration (s)</th></tr>
+    {% for agent, duration in agent_timings.items() %}
+    <tr><td>{{ agent }}</td><td>{{ duration }}</td></tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+</body>
+</html>

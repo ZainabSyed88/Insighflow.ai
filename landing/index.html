@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Data Insights Analyst — Analyze Your Data in Seconds</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ─── Reset & Base ─── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #FFFFFF;
+            color: #1a1a2e;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ─── CSS Variables ─── */
+        :root {
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --primary-light: #818CF8;
+            --secondary: #8B5CF6;
+            --accent: #A78BFA;
+            --text-dark: #1a1a2e;
+            --text-body: #4a4a68;
+            --text-muted: #6b7280;
+            --bg-light: #F8F9FC;
+            --bg-card: #FFFFFF;
+            --border: #E5E7EB;
+            --radius: 16px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ─── Navbar ─── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 48px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+        .navbar.scrolled {
+            box-shadow: var(--shadow-sm);
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        .nav-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            font-weight: 700;
+        }
+        .nav-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-body);
+            font-size: 15px;
+            font-weight: 500;
+            padding: 8px 18px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        .nav-links a:hover {
+            color: var(--primary);
+            background: rgba(99,102,241,0.06);
+        }
+        .nav-cta {
+            background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+            color: #FFFFFF !important;
+            padding: 10px 24px !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+            transition: var(--transition);
+        }
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99,102,241,0.5) !important;
+        }
+
+        /* ─── Hero Section ─── */
+        .hero {
+            padding: 160px 48px 80px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(ellipse, rgba(99,102,241,0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .hero h1 {
+            font-size: clamp(2.8rem, 5.5vw, 4.2rem);
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+        }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero .subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-body);
+            max-width: 640px;
+            margin: 0 auto 40px;
+            font-weight: 400;
+            line-height: 1.7;
+        }
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 18px 48px;
+            border-radius: 16px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(99,102,241,0.4);
+            transition: var(--transition);
+            letter-spacing: -0.01em;
+        }
+        .hero-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(99,102,241,0.55);
+        }
+        .hero-cta:active {
+            transform: translateY(-1px);
+        }
+
+        /* ─── Social Proof ─── */
+        .social-proof {
+            text-align: center;
+            padding: 20px 48px 10px;
+        }
+        .social-proof .label {
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        .stars svg {
+            width: 22px;
+            height: 22px;
+            fill: #FBBF24;
+        }
+
+        /* ─── Feature Tags ─── */
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            padding: 30px 48px 60px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .feature-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-dark);
+            background: var(--bg-card);
+            transition: var(--transition);
+            cursor: default;
+        }
+        .feature-tag:hover {
+            border-color: var(--primary-light);
+            background: rgba(99,102,241,0.04);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        .feature-tag .tag-icon {
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        /* ─── Features Section ─── */
+        .features-section {
+            padding: 80px 48px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .features-section .section-label {
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .features-section .section-title {
+            text-align: center;
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+        .features-section .section-subtitle {
+            text-align: center;
+            font-size: 1.05rem;
+            color: var(--text-body);
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px 32px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        .feature-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+        .feature-card:hover::after {
+            transform: scaleX(1);
+        }
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .feature-icon.viz { background: rgba(99,102,241,0.1); color: var(--primary); }
+        .feature-icon.insights { background: rgba(139,92,246,0.1); color: var(--secondary); }
+        .feature-icon.analysis { background: rgba(34,211,238,0.1); color: #06B6D4; }
+        .feature-icon.cleaning { background: rgba(16,185,129,0.1); color: #10B981; }
+        .feature-icon.report { background: rgba(245,158,11,0.1); color: #F59E0B; }
+        .feature-icon.agents { background: rgba(239,68,68,0.1); color: #EF4444; }
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            letter-spacing: -0.01em;
+        }
+        .feature-card p {
+            font-size: 15px;
+            color: var(--text-body);
+            line-height: 1.65;
+        }
+        .feature-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .feature-link:hover {
+            gap: 10px;
+        }
+
+        /* ─── How It Works Section ─── */
+        .how-it-works {
+            background: var(--bg-light);
+            padding: 100px 48px;
+        }
+        .how-it-works .section-label {
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .how-it-works .section-title {
+            text-align: center;
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+        .how-it-works .section-subtitle {
+            text-align: center;
+            font-size: 1.05rem;
+            color: var(--text-body);
+            max-width: 600px;
+            margin: 0 auto 64px;
+        }
+        .steps-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            position: relative;
+        }
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 12.5%;
+            right: 12.5%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), #22D3EE, #10B981);
+            border-radius: 2px;
+            z-index: 0;
+        }
+        .step {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .step-number {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 3px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+            transition: var(--transition);
+        }
+        .step:hover .step-number {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
+            transform: scale(1.08);
+        }
+        .step h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        .step p {
+            font-size: 14px;
+            color: var(--text-muted);
+            max-width: 200px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* ─── Tech Stack Section ─── */
+        .tech-section {
+            padding: 100px 48px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .tech-section .section-label {
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .tech-section .section-title {
+            text-align: center;
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            margin-bottom: 60px;
+        }
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+        .tech-card {
+            text-align: center;
+            padding: 32px 24px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg-card);
+            transition: var(--transition);
+        }
+        .tech-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+        }
+        .tech-card .tech-icon {
+            font-size: 36px;
+            margin-bottom: 14px;
+        }
+        .tech-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+        .tech-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ─── CTA Section ─── */
+        .cta-section {
+            padding: 100px 48px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(99,102,241,0.04), rgba(139,92,246,0.04));
+        }
+        .cta-section h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+        .cta-section p {
+            font-size: 1.1rem;
+            color: var(--text-body);
+            max-width: 500px;
+            margin: 0 auto 36px;
+        }
+        .cta-section .hero-cta {
+            font-size: 16px;
+            padding: 16px 40px;
+        }
+
+        /* ─── Footer ─── */
+        .footer {
+            background: var(--text-dark);
+            color: #94A3B8;
+            padding: 60px 48px 40px;
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+        }
+        .footer-brand .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .footer-brand .footer-logo .nav-logo {
+            width: 36px;
+            height: 36px;
+            font-size: 17px;
+        }
+        .footer-brand .footer-logo span {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+        .footer-brand p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #94A3B8;
+            max-width: 300px;
+        }
+        .footer-col h5 {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #FFFFFF;
+            margin-bottom: 20px;
+        }
+        .footer-col ul {
+            list-style: none;
+        }
+        .footer-col li {
+            margin-bottom: 12px;
+        }
+        .footer-col a {
+            text-decoration: none;
+            color: #94A3B8;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        .footer-col a:hover {
+            color: var(--primary-light);
+        }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 40px auto 0;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #64748B;
+        }
+
+        /* ─── Animations ─── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(32px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hero h1, .hero .subtitle, .hero-cta, .social-proof, .feature-tags {
+            animation: fadeInUp 0.7s ease forwards;
+        }
+        .hero .subtitle { animation-delay: 0.1s; }
+        .hero-cta { animation-delay: 0.2s; }
+        .social-proof { animation-delay: 0.3s; }
+        .feature-tags { animation-delay: 0.35s; }
+
+        /* ─── Mobile Hamburger ─── */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .mobile-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-dark);
+            margin: 5px 0;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 1024px) {
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .tech-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-content { grid-template-columns: 1fr 1fr; gap: 32px; }
+        }
+        @media (max-width: 768px) {
+            .navbar { padding: 0 24px; }
+            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 72px;
+                left: 0;
+                right: 0;
+                background: rgba(255,255,255,0.98);
+                backdrop-filter: blur(20px);
+                padding: 24px;
+                border-bottom: 1px solid var(--border);
+                box-shadow: var(--shadow-md);
+            }
+            .hero { padding: 130px 24px 60px; }
+            .hero h1 { font-size: 2.2rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .steps-container { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+            .steps-container::before { display: none; }
+            .tech-grid { grid-template-columns: 1fr 1fr; }
+            .feature-tags { padding: 20px 24px 40px; }
+            .features-section, .how-it-works, .tech-section, .cta-section {
+                padding: 60px 24px;
+            }
+            .footer { padding: 40px 24px 30px; }
+            .footer-content { grid-template-columns: 1fr; gap: 32px; }
+            .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 1.8rem; }
+            .hero-cta { padding: 16px 36px; font-size: 16px; }
+            .steps-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── Navbar ─── -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-brand">
+            <div class="nav-logo">🔬</div>
+            <span class="nav-title">AI Data Insights</span>
+        </a>
+        <button class="mobile-toggle" onclick="toggleMenu()" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#tech-stack">Tech Stack</a></li>
+            <li><a href="#" onclick="launchApp(); return false;" class="nav-cta">Launch App</a></li>
+        </ul>
+    </nav>
+
+    <!-- ─── Hero Section ─── -->
+    <section class="hero">
+        <h1>Analyze your data <span class="highlight">in seconds</span></h1>
+        <p class="subtitle">
+            Upload your files and uncover valuable insights using AI-powered 
+            multi-agent analysis. Automated cleaning, visualization, and reporting — all in one platform.
+        </p>
+        <a href="#" onclick="launchApp(); return false;" class="hero-cta">
+            Get started
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+    </section>
+
+    <!-- ─── Social Proof ─── -->
+    <div class="social-proof">
+        <p class="label">Trusted by data analysts and teams</p>
+        <div class="stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+    </div>
+
+    <!-- ─── Feature Tags ─── -->
+    <div class="feature-tags">
+        <div class="feature-tag">
+            <span class="tag-icon">✨</span> Quick data visualizations
+        </div>
+        <div class="feature-tag">
+            <span class="tag-icon">💡</span> Accurate statistical analysis
+        </div>
+        <div class="feature-tag">
+            <span class="tag-icon">📊</span> Excel & CSV support
+        </div>
+        <div class="feature-tag">
+            <span class="tag-icon">🔍</span> Data cleaning
+        </div>
+        <div class="feature-tag">
+            <span class="tag-icon">🤖</span> Multi-agent AI pipeline
+        </div>
+        <div class="feature-tag">
+            <span class="tag-icon">🔒</span> Local data processing
+        </div>
+    </div>
+
+    <!-- ─── Features Section ─── -->
+    <section class="features-section" id="features">
+        <p class="section-label">Capabilities</p>
+        <h2 class="section-title">Everything you need for data analysis</h2>
+        <p class="section-subtitle">
+            Powered by specialized AI agents that work together to deliver comprehensive insights from your raw data.
+        </p>
+        <div class="features-grid">
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon viz">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <h3>Visualizations</h3>
+                <p>Automatically create interactive Plotly charts — histograms, scatter plots, bar charts, and more — tailored to your data.</p>
+                <a href="#" onclick="launchApp(); return false;" class="feature-link">Generate visualizations →</a>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon insights">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <h3>Insights</h3>
+                <p>Chat with your data while AI agents uncover actionable trends, anomalies, and correlations hidden in your datasets.</p>
+                <a href="#" onclick="launchApp(); return false;" class="feature-link">Discover insights →</a>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon analysis">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                </div>
+                <h3>Analysis</h3>
+                <p>Perform complex statistical analysis and generate predictive insights powered by LLM-driven multi-agent orchestration.</p>
+                <a href="#" onclick="launchApp(); return false;" class="feature-link">Start analysis →</a>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon cleaning">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
+                </div>
+                <h3>Smart Cleaning</h3>
+                <p>AI-powered data cleaning that handles missing values, removes outliers, validates data types, and prepares your dataset automatically.</p>
+                <a href="#" onclick="launchApp(); return false;" class="feature-link">Clean your data →</a>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon report">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <h3>Executive Reports</h3>
+                <p>Generate comprehensive HTML and PDF reports with executive summaries, key findings, and recommendations — ready to share.</p>
+                <a href="#" onclick="launchApp(); return false;" class="feature-link">Generate reports →</a>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon agents">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <h3>Quality Verification</h3>
+                <p>Built-in verification agent audits data quality, validates cleaning results, and ensures your analysis is built on reliable data.</p>
+                <a href="#" onclick="launchApp(); return false;" class="feature-link">Verify your data →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── How It Works ─── -->
+    <section class="how-it-works" id="how-it-works">
+        <p class="section-label">Workflow</p>
+        <h2 class="section-title">How it works</h2>
+        <p class="section-subtitle">
+            A simple four-step pipeline powered by specialized AI agents working in concert.
+        </p>
+        <div class="steps-container">
+            <div class="step animate-on-scroll">
+                <div class="step-number">📁</div>
+                <h4>Upload</h4>
+                <p>Drop your CSV or Excel file — up to 50MB supported.</p>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-number">🧹</div>
+                <h4>Clean & Verify</h4>
+                <p>AI agents clean, impute, and verify your data quality automatically.</p>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-number">🧠</div>
+                <h4>Analyze</h4>
+                <p>Trend, anomaly, and correlation agents extract deep insights.</p>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-number">📊</div>
+                <h4>Visualize & Report</h4>
+                <p>Get interactive charts and downloadable executive reports.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── Tech Stack ─── -->
+    <section class="tech-section" id="tech-stack">
+        <p class="section-label">Built with the best</p>
+        <h2 class="section-title">Powered by modern technology</h2>
+        <div class="tech-grid">
+            <div class="tech-card animate-on-scroll">
+                <div class="tech-icon">🔗</div>
+                <h4>LangGraph</h4>
+                <p>Graph-based multi-agent orchestration</p>
+            </div>
+            <div class="tech-card animate-on-scroll">
+                <div class="tech-icon">🤖</div>
+                <h4>LLM Powered</h4>
+                <p>GPT OSS 120B via NVIDIA API</p>
+            </div>
+            <div class="tech-card animate-on-scroll">
+                <div class="tech-icon">📊</div>
+                <h4>Plotly</h4>
+                <p>Interactive data visualizations</p>
+            </div>
+            <div class="tech-card animate-on-scroll">
+                <div class="tech-icon">⚡</div>
+                <h4>Streamlit</h4>
+                <p>Fast, responsive user interface</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── CTA Section ─── -->
+    <section class="cta-section">
+        <h2>Ready to unlock your data's potential?</h2>
+        <p>Start analyzing your datasets in seconds with AI-powered agents. No setup required.</p>
+        <a href="#" onclick="launchApp(); return false;" class="hero-cta">
+            Get started — it's free
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+    </section>
+
+    <!-- ─── Footer ─── -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="nav-logo">🔬</div>
+                    <span>AI Data Insights</span>
+                </div>
+                <p>A sophisticated multi-agent system that automates data cleaning, verification, analysis, and visualization using LangGraph and LLMs.</p>
+            </div>
+            <div class="footer-col">
+                <h5>Product</h5>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#tech-stack">Tech Stack</a></li>
+                    <li><a href="#" onclick="launchApp(); return false;">Launch App</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Agents</h5>
+                <ul>
+                    <li><a href="#features">Cleaning Agent</a></li>
+                    <li><a href="#features">Verification Agent</a></li>
+                    <li><a href="#features">Insights Agent</a></li>
+                    <li><a href="#features">Visualization Agent</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Resources</h5>
+                <ul>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">GitHub</a></li>
+                    <li><a href="#">API Reference</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 AI Data Insights Analyst. All rights reserved.</span>
+            <span>Built with LangGraph · Plotly · Streamlit</span>
+        </div>
+    </footer>
+
+    <!-- ─── Scripts ─── -->
+    <script>
+        // Launch app — communicate with Streamlit parent
+    function launchApp() {
+        try {
+            var parentUrl = window.parent.location.href.split('?')[0].split('#')[0];
+            window.parent.location.href = parentUrl + '?page=app';
+        } catch(e) {
+            window.parent.location.reload();
+        }
+    }
+
+    // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 20);
+        });
+
+        // Mobile menu toggle
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navLinks').classList.remove('active');
+            });
+        });
+
+        // Scroll animation observer
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -40px 0px'
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Stagger animations
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

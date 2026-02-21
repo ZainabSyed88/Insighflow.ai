@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI Data Insights Report — zepto_sales_dataset.csv</title>
+<style>
+    @page {
+        size: A4;
+        margin: 2cm 1.5cm;
+        @bottom-center { content: "Page " counter(page) " of " counter(pages); font-size: 9px; color: #888; }
+    }
+    body {
+        font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        color: #222;
+        line-height: 1.6;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* ---------- Cover Page ---------- */
+    .cover {
+        text-align: center;
+        padding: 120px 40px 60px;
+        page-break-after: always;
+    }
+    .cover h1 { font-size: 32px; color: #1a73e8; margin-bottom: 10px; }
+    .cover .subtitle { font-size: 18px; color: #555; }
+    .cover .meta { margin-top: 40px; font-size: 14px; color: #888; }
+
+    /* ---------- Sections ---------- */
+    h2 {
+        color: #1a73e8;
+        border-bottom: 2px solid #1a73e8;
+        padding-bottom: 6px;
+        margin-top: 30px;
+    }
+    h3 { color: #333; margin-top: 20px; }
+
+    /* ---------- Scorecard ---------- */
+    .scorecard {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin: 15px 0;
+    }
+    .scorecard .card {
+        background: #f0f4ff;
+        border-radius: 8px;
+        padding: 15px 25px;
+        text-align: center;
+        min-width: 140px;
+        flex: 1;
+    }
+    .card .value { font-size: 28px; font-weight: 700; color: #1a73e8; }
+    .card .label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ---------- Color badges ---------- */
+    .badge-green  { background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .badge-yellow { background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .badge-red    { background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+
+    /* ---------- Tables ---------- */
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+    th { background: #1a73e8; color: #fff; padding: 8px 12px; text-align: left; }
+    td { padding: 6px 12px; border-bottom: 1px solid #e0e0e0; }
+    tr:nth-child(even) { background: #f9f9f9; }
+
+    /* ---------- Charts ---------- */
+    .chart-container { margin: 15px 0; text-align: center; }
+    .chart-container img { max-width: 100%; border: 1px solid #ddd; border-radius: 6px; }
+    .chart-placeholder {
+        background: #f0f4ff; border: 1px dashed #1a73e8; border-radius: 6px;
+        padding: 30px; text-align: center; color: #1a73e8; font-style: italic;
+    }
+
+    /* ---------- Recommendations ---------- */
+    .rec-list { list-style: none; padding: 0; }
+    .rec-list li { padding: 8px 12px; margin: 5px 0; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 0 6px 6px 0; }
+
+    /* ---------- Misc ---------- */
+    .narrative { background: #fafafa; padding: 15px; border-radius: 6px; margin: 10px 0; }
+    .section-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<!-- ========== COVER PAGE ========== -->
+<div class="cover">
+    <h1>📊 AI Data Insights Report</h1>
+    <div class="subtitle">zepto_sales_dataset.csv</div>
+    <div class="meta">
+        Generated: 2026-02-21 05:34 UTC<br>
+        Powered by AI Data Insights Analyst
+    </div>
+</div>
+
+<!-- ========== EXECUTIVE SUMMARY ========== -->
+<h2>Executive Summary</h2>
+<div class="narrative">The dataset scores **79.8 / 100** on data‑quality, indicating moderate reliability but enough room for improvement. Trend analysis finds **no statistically significant movement** in original price, current price, discount, orders, or total revenue (p = 1.00), so performance has been essentially flat over the period examined. Correlation results show that **total revenue is driven by both order volume (r ≈ 0.68) and price level (r ≈ 0.66)**, while discounts have only a weak negative link to revenue (r ≈ ‑0.14) and price changes are unrelated to order count (r ≈ ‑0.006), suggesting the product line is relatively price‑inelastic. The Isolation‑Forest model flagged **15 anomalous rows (5 % of 298 records)** that are not outliers on any single field, pointing to possible data‑entry or processing glitches in unusual value combinations. The primary risks are the moderate data‑quality score and the unverified anomalies, which could distort downstream reporting and hide true performance shifts. **Recommended actions:** audit and correct the 15 flagged records; maintain close monitoring of price and discount metrics while piloting modest price increases to capture revenue; revisit the discount strategy given its limited effect; and strengthen data‑validation controls to raise the quality score above 85.</div>
+
+<!-- ========== DATA QUALITY SCORECARD ========== -->
+<h2>Data Quality Scorecard</h2>
+<div class="scorecard">
+    <div class="card">
+        <div class="value">
+            <span class="badge-yellow">79.8</span>
+            
+        </div>
+        <div class="label">Overall Score (0-100)</div>
+    </div>
+    
+    <div class="card">
+        <div class="value">2</div>
+        <div class="label">Rows Removed</div>
+    </div>
+    <div class="card">
+        <div class="value">0</div>
+        <div class="label">Missing Values Handled</div>
+    </div>
+    <div class="card">
+        <div class="value">99.5%</div>
+        <div class="label">Retention Quality</div>
+    </div>
+    
+    
+    <div class="card">
+        <div class="value">5.0%</div>
+        <div class="label">Anomaly Rate</div>
+    </div>
+    
+</div>
+
+<!-- ========== TREND ANALYSIS ========== -->
+
+<h2 class="section-break">Trend Analysis</h2>
+
+<div class="narrative">Across all key metrics—Original Price, Current Price, Discount, Orders, and Total Revenue—there is no statistically detectable trend (p = 1.00, not significant). In plain terms, the data show that prices, discounts, order volumes, and revenue have remained essentially flat over the period examined. This stability suggests that recent pricing or promotional actions have not yet driven measurable change, so the business may want to monitor these variables closely before assuming the current strategy is delivering growth.</div>
+
+
+
+<table>
+    <tr><th>Column</th><th>Direction</th><th>Significant?</th><th>p-value</th></tr>
+    
+    <tr>
+        <td>Original Price</td>
+        <td>no trend</td>
+        <td>No</td>
+        <td>1.0000</td>
+    </tr>
+    
+    <tr>
+        <td>Current Price</td>
+        <td>no trend</td>
+        <td>No</td>
+        <td>1.0000</td>
+    </tr>
+    
+    <tr>
+        <td>Discount</td>
+        <td>no trend</td>
+        <td>No</td>
+        <td>1.0000</td>
+    </tr>
+    
+    <tr>
+        <td>Orders</td>
+        <td>no trend</td>
+        <td>No</td>
+        <td>1.0000</td>
+    </tr>
+    
+    <tr>
+        <td>Total Revenue</td>
+        <td>no trend</td>
+        <td>No</td>
+        <td>1.0000</td>
+    </tr>
+    
+</table>
+
+
+
+<!-- ========== ANOMALY REPORT ========== -->
+
+<h2 class="section-break">Anomaly Report</h2>
+<div class="narrative">The analysis flagged **15 anomalous rows (5 % of the 298 records)**, all identified by the Isolation‑Forest multivariate model. No single field showed traditional outliers – the columns *Original Price, Current Price, Discount, Orders,* and *Total Revenue* each have zero IQR or Z‑score outliers – indicating that the anomalies arise from unusual combinations of values rather than extreme values in any one column.  
+
+**Business actions:**  
+1. Pull the 15 flagged records and compare them against the source system or transaction logs to confirm whether they represent data‑entry mistakes, processing glitches, or genuine edge‑case sales.  
+2. If errors are confirmed, correct the records and update any downstream reports that rely on this dataset.  
+3. If the records are valid but represent rare business scenarios (e.g., bulk discounts or promotional bundles), consider documenting these cases and, if they are expected to recur, adjust the Isolation‑Forest model or add rule‑based checks to reduce false positives in future runs.</div>
+
+
+<table>
+    <tr><th>Column</th><th>IQR Outliers</th><th>Z-score Outliers</th><th>Total</th></tr>
+    
+    
+    <tr>
+        <td>Original Price</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+    </tr>
+    
+    
+    
+    <tr>
+        <td>Current Price</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+    </tr>
+    
+    
+    
+    <tr>
+        <td>Discount</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+    </tr>
+    
+    
+    
+    <tr>
+        <td>Orders</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+    </tr>
+    
+    
+    
+    <tr>
+        <td>Total Revenue</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+    </tr>
+    
+    
+    
+    
+</table>
+
+
+
+<!-- ========== CORRELATION ANALYSIS ========== -->
+
+<h2 class="section-break">Correlation Analysis</h2>
+<div class="narrative">The data show a near‑perfect positive link between **Original Price** and **Current Price** (r ≈ 0.99), confirming that price adjustments are modest and the two fields move together. More consequential for the business are the strong positive correlations of **Orders** with **Total Revenue** (r ≈ 0.68) and of **Current/Original Price** with **Total Revenue** (r ≈ 0.66), indicating that revenue growth is driven both by selling more units and by maintaining higher price points. Surprisingly, **Current Price** is essentially uncorrelated with **Orders** (r ≈ ‑0.006) and **Discount** shows only a weak negative relationship with both **Orders** (r ≈ ‑0.036) and **Total Revenue** (r ≈ ‑0.135), suggesting that price changes and modest discounts are not deterring customers or eroding revenue as much as expected. A plausible causal story is that the product line has relatively inelastic demand—customers continue to buy at higher prices, so revenue rises mainly from price level rather than volume shifts; discounts may be too shallow to stimulate additional orders, resulting in a net revenue dip when applied. Testing this hypothesis could involve segmenting by discount depth or price tier to see if elasticity varies across customer groups.</div>
+
+
+<h3>Top Positive Correlations</h3>
+<table>
+    <tr><th>Column A</th><th>Column B</th><th>Correlation</th></tr>
+    
+    <tr><td>Original Price</td><td>Current Price</td><td>0.9937</td></tr>
+    
+    <tr><td>Orders</td><td>Total Revenue</td><td>0.6820</td></tr>
+    
+    <tr><td>Current Price</td><td>Total Revenue</td><td>0.6594</td></tr>
+    
+    <tr><td>Original Price</td><td>Total Revenue</td><td>0.6588</td></tr>
+    
+</table>
+
+
+
+<h3>Top Negative Correlations</h3>
+<table>
+    <tr><th>Column A</th><th>Column B</th><th>Correlation</th></tr>
+    
+    <tr><td>Current Price</td><td>Orders</td><td>-0.0056</td></tr>
+    
+    <tr><td>Discount</td><td>Orders</td><td>-0.0359</td></tr>
+    
+    <tr><td>Current Price</td><td>Discount</td><td>-0.0619</td></tr>
+    
+    <tr><td>Original Price</td><td>Discount</td><td>-0.0670</td></tr>
+    
+    <tr><td>Discount</td><td>Total Revenue</td><td>-0.1348</td></tr>
+    
+</table>
+
+
+
+<!-- ========== VISUALIZATIONS ========== -->
+
+<h2 class="section-break">Visualizations</h2>
+
+<div class="chart-container">
+    <h3>Visualization 1</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 1</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 2</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 2</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 3</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 3</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 4</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 4</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 5</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 5</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 6</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 6</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 7</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 7</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 8</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 8</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 9</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 9</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 10</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 10</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 11</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 11</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 12</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 12</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 13</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 13</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 14</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 14</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 15</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 15</div>
+    
+</div>
+
+<div class="chart-container">
+    <h3>Visualization 16</h3>
+    
+    <div class="chart-placeholder">Chart available in interactive HTML report: Visualization 16</div>
+    
+</div>
+
+
+
+<!-- ========== BUSINESS RECOMMENDATIONS ========== -->
+
+<h2 class="section-break">Business Recommendations</h2>
+<ol class="rec-list">
+    
+    <li>Implement a modest price‑increase pilot on top‑selling SKUs, monitor order volume for elasticity, and roll out adjustments to items showing inelastic demand.</li>
+    
+    <li>Redesign the discount program to focus on higher‑value promotions (e.g., bundle offers or tiered discounts) and allocate the saved discount budget to loyalty or influencer initiatives.</li>
+    
+    <li>Expand the product portfolio beyond the current 10 SKUs by introducing complementary items in under‑represented categories to reduce revenue concentration risk.</li>
+    
+    <li>Develop a targeted geographic growth plan that allocates marketing and logistics resources to the five cities with lower current sales, using Hyderabad performance as a benchmark.</li>
+    
+    <li>Conduct a full audit of the Influencer Active flag, quantify its true/false distribution, and measure its impact on orders and revenue to decide on scaling or optimizing influencer partnerships.</li>
+    
+</ol>
+
+
+<!-- ========== APPENDIX ========== -->
+
+<h2 class="section-break">Appendix — Raw Statistics</h2>
+<table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    
+    <tr><td>Total Rows</td><td>298</td></tr>
+    
+    <tr><td>Total Columns</td><td>9</td></tr>
+    
+    <tr><td>Numeric Columns</td><td>5</td></tr>
+    
+    <tr><td>Categorical Columns</td><td>3</td></tr>
+    
+    <tr><td>Memory Usage Mb</td><td>0.06814193725585938</td></tr>
+    
+</table>
+
+
+<!-- ========== AGENT PERFORMANCE ========== -->
+
+<h3>Agent Latency</h3>
+<table>
+    <tr><th>Agent</th><th>Duration (s)</th></tr>
+    
+    <tr><td>TrendAgent</td><td>4.26</td></tr>
+    
+    <tr><td>CorrelationAgent</td><td>5.18</td></tr>
+    
+    <tr><td>AnomalyAgent</td><td>7.08</td></tr>
+    
+    <tr><td>InsightsAgent</td><td>11.4</td></tr>
+    
+    <tr><td>VisualizationAgent</td><td>22.26</td></tr>
+    
+    <tr><td>ReportSynthesisAgent</td><td>8.45</td></tr>
+    
+</table>
+
+
+</body>
+</html>
